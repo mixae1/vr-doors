@@ -5,17 +5,8 @@ public class AN_Button : MonoBehaviour
 {
     [Tooltip("If it isn't valve, it can be lever or button (animated)")]
     public bool isLever = true;
-    [Tooltip("If it is false door can't be used")]
-    public bool Locked = false;
     [Tooltip("The door for remote control")]
     public AN_DoorScript DoorObject;
-    [Space]
-    [Tooltip("Any object for ramp/elevator baheviour")]
-    public Transform RampObject;
-    [Tooltip("Door can be opened")]
-    public bool CanOpen = true;
-    [Tooltip("Door can be closed")]
-    public bool CanClose = true;
     [Tooltip("Current status of the door")]
     public bool isOpened = false;
     [Space]
@@ -34,25 +25,27 @@ public class AN_Button : MonoBehaviour
     float angleView;
     Vector3 direction;
 
+    float ltt;
+
     void Start()
     {
         anim = GetComponent<Animator>();
+        ltt = 0.0f;
+        DoorObject.isOpened = isOpened;
     }
 
     void Update()
     {
-        if (!Locked)
-        {
-            if (interactAction.action.IsPressed() && DoorObject != null && DoorObject.Remote && NearView()) // 1.lever and 2.button
+        if (interactAction.action.IsPressed() && Time.time - ltt > 1f && DoorObject != null && NearView()) {
+            ltt = Time.time;
+            isOpened = !isOpened;
+            DoorObject.isOpened = isOpened;
+            if (isLever) // animations
             {
-                DoorObject.Action(); // void in door script to open/close
-                if (isLever) // animations
-                {
-                    if (DoorObject.isOpened) anim.SetBool("LeverUp", true);
-                    else anim.SetBool("LeverUp", false);
-                }
-                else anim.SetTrigger("ButtonPress");
+                if (DoorObject.isOpened) anim.SetBool("LeverUp", true);
+                else anim.SetBool("LeverUp", false);
             }
+            else anim.SetTrigger("ButtonPress");
         }
     }
 

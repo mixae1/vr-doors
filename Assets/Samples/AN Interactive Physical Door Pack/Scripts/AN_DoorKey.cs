@@ -5,11 +5,8 @@ using UnityEngine.InputSystem;
 
 public class AN_DoorKey : MonoBehaviour
 {
-    [Tooltip("True - red key object, false - blue key")]
-    public bool isRedKey = true;
-
     public InputActionReference interactAction;
-    AN_HeroInteractive hero;
+    public AN_DoorScript doorObject;
 
     // NearView()
     float distance;
@@ -18,15 +15,13 @@ public class AN_DoorKey : MonoBehaviour
 
     private void Start()
     {
-        hero = FindObjectOfType<AN_HeroInteractive>(); // key will get up and it will saved in "inventary"
     }
 
     void Update()
     {
         if ( NearView() && interactAction.action.IsPressed())
         {
-            if (isRedKey) hero.RedKey = true;
-            else hero.BlueKey = true;
+            doorObject.isOpened = true;
             Destroy(gameObject);
         }
     }
